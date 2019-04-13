@@ -22,7 +22,7 @@ The grading policy for this project is as follows:
 * Implementation documentation (5%): Basic code comments for complicated areas of code.
 
 ## Due Date
-This project will be due May 8th before noon for seniors and May 12th before noon for Juniors and Sophomores.
+This project will be due May 8th before noon for Seniors and May 12th before noon for Juniors and Sophomores.
 Please submit files in an archive via email, or provide a link to a public repository.
 
 ## Test Run
