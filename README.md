@@ -12,26 +12,22 @@ The goal of this project is to develop a transport layer protocol that can succe
 ### Requirements
 The submitted sender and receiver implementations must be able to:
 * Sucessfully transfer data over the noisy channel
-* Be TCP-fair (multiple sender-receiver pairs should evenly share bandwidth, on average over the long term)
-
+* Be fast
+* Keep channelsimulator.py unchanged in any submitted code.  You can play around with it while testing, but submissions will be rejected if you submit a changed channelsimulator.py  
+ 
 ## Grading
 The grading policy for this project is as follows:
-* Protocol design specifications (20%): a written report providing an overview of your specific protocol and design choices. A discussion of your protocol's features, tradeoffs and assumptions.
-* Implementation documentation (10%): implementation specific documentation including libraries used and code annotations.
+* Competitive performance (35%): protocol performance will be determined relative to a reference implementation and to the class.
 * Minimum functionality (60%): protocol must be able to transmit and acknowledge receipt of data packets through the unreliable channel.
-* Competitive performance (10%): protocol performance will be determined relative to a reference implementation and to the class.
+* Implementation documentation (5%): Basic code comments for complicated areas of code.
 
 ## Due Date
-This project will be due Thursday, May 3rd before noon. This is the day of the final exam.
+This project will be due May 8th before noon for seniors and May 12th before noon for Juniors and Sophomores.
 Please submit files in an archive via email, or provide a link to a public repository.
 
 ## Test Run
-The easiest way to run the BogoSender and BogoReceiver is by calling python and passing the .py files.
+To run your code, you just have to use "make test" and to check if works, you can either diff the fiies or run "make diff".
 
-`$ python2 receiver.py > receiver.log &`
-`$ python2 sender.py > sender.log &`
+Also, I am using "base64 /dev/urandom | head -c 100000 |tr -d '\n' > file_1.txt" to generate my input files.  Will be testing 10 MB, 25 MB, and 100MB files.  I provide a 1 MB  file and a 4B file in the repo that you can use to test. 
 
-The sender will complete and stop after the timeout, the receiver will crash. The output will be written to receiver.log and sender.log as indicated.
-The files may also be run in an IDE such a PyCharm. To do so, right-click anywhere in the open file and select "run" or click the green arrow next to `if __name__ == "__main__":`.
 
-`test.py` has a short main function which currently runs the `corrupt()` function. You may modify it to play around with the API.
