@@ -14,6 +14,8 @@ The submitted sender and receiver implementations must be able to:
 * Sucessfully transfer data over the noisy channel
 * Be fast
 * Keep channelsimulator.py unchanged in any submitted code.  You can play around with it while testing, but submissions will be rejected if you submit a changed channelsimulator.py  
+* Can be done in up to groups of 3 people.  Grading will be more difficult depending on the amount of people in the group.
+
  
 ## Grading
 The grading policy for this project is as follows:
@@ -24,6 +26,7 @@ The grading policy for this project is as follows:
 ## Due Date
 This project will be due May 16th before noon for Seniors and May 18th before noon for Juniors and Sophomores.
 Please submit files in an archive via email, or provide a link to a public repository.
+Submitting the project earlier will let me review it and give you feedback.  You can resubmit as many times before the deadline.
 
 ## Test Run
 To run your code, you just have to use "make test" and to check if works, you can either diff the fiies or run "make diff".
