@@ -1,0 +1,120 @@
+8a9
+> 
+10a12,14
+> MAX_SEQUENCE_NUMBER = 256
+> 
+> 
+33c37,38
+<         self.logger.info("Sending on port: {} and waiting for ACK on port: {}".format(self.outbound_port, self.inbound_port))
+---
+>         self.logger.info(
+>             "Sending on port: {} and waiting for ACK on port: {}".format(self.outbound_port, self.inbound_port))
+44d48
+< MAX_SEQUENCE_NUMBER = 256
+46,48c50,53
+< class mySender(BogoSender):
+<     def __init__(self, max_segment_size=959, timeout = 0.1):
+<         super(mySender, self).__init__()
+---
+> class OurSender(BogoSender):
+> 
+>     def __init__(self, max_segment_size=959, timeout=0.01):
+>         super(OurSender, self).__init__()
+53a59
+>     # produce a checksum value
+56c62
+<         return hashlib.md5(data).hexdigest() # https://stackoverflow.com/questions/16874598/how-do-i-calculate-the-md5-checksum-of-a-file-in-python
+---
+>         return hashlib.md5(data).hexdigest()
+58,61c64,68
+<     def send(self, data): # override send method from BogoSend
+<         self.logger.info("Sending on port: {} and waiting for ACK on port: {}".format(self.outbound_port, self.inbound_port))
+< 
+<         i = 0
+---
+>     def send(self, data):
+>         self.logger.info(
+>             "Sending on port: {} and waiting for ACK on port: {}".format(self.outbound_port, self.inbound_port))
+>         # initialize parameters
+>         start = 0
+63,66c70,72
+<         packet = None
+< 	seq_num = 0
+<         last_checksum = bytearray([0 for _ in range(32)])
+< 
+---
+>         send_array = None
+>         sequence_number = 0
+>         previous_checksum = bytearray([0 for _ in range(32)])
+69,81c75,91
+<                 if not resend: # create new packet to send
+<                     # 0:32 checksum, 32:64 previous checksum, 64 sequence num, 65-end data
+<                     packet = bytearray([seq_num])
+<                     seq_num = (seq_num + 1) % MAX_SEQUENCE_NUMBER
+<                     packet += data[i:i+self.MSS]
+< 
+<                     packet = last_checksum + packet
+<                     checksum = self.checksum(packet)
+<                     send_array = checksum + packet
+<                     last_checksum = checksum
+<                     i += self.MSS
+<                     self.logger.info("sending packet {}".format(packet))
+<                     self.simulator.u_send(packet)
+---
+>                 # 0:32 - md5
+>                 # 32:64 - previous md5
+>                 # 64 - sequence_number
+>                 # 65: - data
+>                 # include previous checksum because in some instances MAX_SEQUENCE_NUMBER packets were dropped in a row
+>                 # can alternatively include checksum in ACK
+>                 if not resend:
+>                     # send a new packet
+>                     send_array = bytearray([sequence_number])
+>                     sequence_number = (sequence_number + 1) % MAX_SEQUENCE_NUMBER
+>                     send_array += data[start:start+self.MSS]
+>                     send_array = previous_checksum + send_array
+>                     checksum = self.checksum(send_array)
+>                     send_array = checksum + send_array
+>                     previous_checksum = checksum
+>                     start += self.MSS
+>                     self.simulator.u_send(send_array)
+83d92
+<                     self.logger.info("Sending previous packet {}".format(packet))
+85c94
+<                     self.simulator.u_send(packet)
+---
+>                     self.simulator.u_send(send_array)
+87,96c96,100
+<                 ACK = self.simulator.u_receive()
+< 
+<                 # check checksum: handle random bit errors
+<                 self.logger.info("Received ACK: {}".format(ACK))
+<                 self.logger.info(ACK[0:32])
+<                 self.logger.info(self.checksum(ACK[32:]))
+< 
+<                 if self.checksum(ACK[32:]) == ACK[0:32]:
+<                     if ack[32] == seq_num:
+<                         if i >= len(data): # reached the end of our data
+---
+>                 ack = self.simulator.u_receive()
+>                 # check the checksum of the ACK
+>                 if self.checksum(ack[32:]) == ack[0:32]:
+>                     if ack[32] == sequence_number:
+>                         if start >= len(data):
+103d106
+< 
+105d107
+<                 self.logger.info("Timeout on send")
+107a110
+> 
+109c112
+<     # test out mySender
+---
+>     # test out BogoSender
+111c114,117
+<     sndr = mySender()
+---
+>     # sndr = BogoSender()
+>     # sndr.send(DATA)
+>     # use OurSender
+>     sndr = OurSender()
