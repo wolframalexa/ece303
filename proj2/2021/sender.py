@@ -43,6 +43,8 @@ class BogoSender(Sender):
 
 MAX_SEQUENCE_NUMBER = 256
 
+# written by Alexa Jakob with help from Mark Koszykowski
+
 class mySender(BogoSender):
     def __init__(self, max_segment_size=959, timeout = 0.1):
         super(mySender, self).__init__()
@@ -74,7 +76,7 @@ class mySender(BogoSender):
 
                     packet = last_checksum + packet
                     checksum = self.checksum(packet)
-                    send_array = checksum + packet
+                    packet = checksum + packet
                     last_checksum = checksum
                     i += self.MSS
                     self.logger.info("sending packet {}".format(packet))
@@ -92,7 +94,7 @@ class mySender(BogoSender):
                 self.logger.info(self.checksum(ACK[32:]))
 
                 if self.checksum(ACK[32:]) == ACK[0:32]:
-                    if ack[32] == seq_num:
+                    if ACK[32] == seq_num:
                         if i >= len(data): # reached the end of our data
                             break
                         resend = False

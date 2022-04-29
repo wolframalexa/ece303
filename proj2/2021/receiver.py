@@ -43,8 +43,10 @@ class BogoReceiver(Receiver):
             except socket.timeout:
                 sys.exit()
 
+# written by Alexa Jakob with help from Mark Koszykowski
+
 class myReceiver(BogoReceiver):
-    def __init__(self, timeout = 0.1):
+    def __init__(self, timeout = 0.01):
          super(myReceiver, self).__init__()
          self.timeout = timeout
          self.simulator.sndr_socket.settimeout(self.timeout)
@@ -70,12 +72,6 @@ class myReceiver(BogoReceiver):
 
                 self.logger.info(self.checksum(data[32:]))
                 self.logger.info(data[0:32])
-
-                # lower timeout for received packet
-                if self.timeout > 0.1:
-                    dup = 0
-                    self.timeout /= 2
-                    self.simulator.rcvr_socket.settimeout(self.timeout)
 
                 # check checksum of received packet
                 if self.checksum(data[32:]) == data[0:32]:
@@ -103,13 +99,6 @@ class myReceiver(BogoReceiver):
             except socket.timeout:
                 self.logger.info("Timeout on Receiver")
                 self.simulator.u_send(recent_ack)
-                dup += 1
-                if dup == 3:
-                    dup = 0
-                    self.timeout *= 2
-                    if self.timeout > 10:
-                        sys.exit()
-                    self.simulator.rcvr_socket.settimeout(self.timeout)
 
 
 if __name__ == "__main__":
